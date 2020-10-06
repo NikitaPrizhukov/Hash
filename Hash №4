@@ -1,0 +1,62 @@
+include <iostream>
+#include <string>
+#include <cmath>
+#include <map>
+
+using namespace std;
+
+//вывод деления чисел в строковом виде
+
+void period(int a, int b) {
+
+	map<char, int> sh;
+	string num;
+	int ost = a % b;
+	int cel = a / b;
+	num = to_string(cel);
+
+	if (ost == 0) {
+		cout << num;
+		return;
+	}
+
+	num.push_back('.');
+
+	int len = num.length();
+
+	for (int i = 0; i < b; i++) {
+
+		if (ost == 0) {
+			cout << num;
+			return;
+		}
+
+		sh[ost] = i;
+
+		cel = (ost * 10) / b;
+		ost = (ost * 10) % b;
+		num += to_string(cel);
+
+		if (sh.find(ost) != sh.end()) {
+			num.insert(sh[ost] + len, "(");
+			num.push_back(')');
+			break;
+		}
+	}
+
+	cout << num;
+}
+
+int main() {
+
+	int a;
+	int b;
+	cin >> a;
+	cin >> b;
+
+	period(a, b);
+
+	//cout << a/b*1.0;
+
+	return 0;
+}
