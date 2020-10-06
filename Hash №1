@@ -1,0 +1,60 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <cmath>
+#include <math.h>
+
+using namespace std;
+
+//проверка чисел, можно ли после нескольких преобразований получить число 1
+//например 19, 1**2+9**2= 82, ...... 1**2+0**2+0**2 = 1
+
+bool findLuck(int num, string& back) {
+
+    static vector<int> mas;
+    mas.push_back(num);
+
+    string now = to_string(num);
+    int nowL = 0;
+
+    for (size_t i = 0; i < now.length(); i++) {
+        nowL = nowL + pow(now[i] - 48, 2);
+    }
+
+    if (nowL == 1) {
+        return true;
+    }
+
+    for (int i = 0; i < mas.size(); i++) {
+        if (nowL == mas[i]) {
+            return false;
+        }
+    }
+
+    if (back == to_string(nowL)) {
+        return false;
+    }
+
+    back = to_string(nowL);
+
+    return findLuck(nowL, back);
+}
+
+int main() {
+
+    int num;
+    cin >> num;
+
+    string back = to_string(num);
+
+    if (findLuck(num, back)) {
+        cout << "True";
+    }
+    else {
+        cout << "False";
+    }
+
+
+    return 0;
+}
