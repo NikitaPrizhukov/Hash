@@ -1,0 +1,206 @@
+#include <iostream>
+#include <vector>
+//Хеш-таблица
+
+using namespace std;
+
+struct Element
+{
+	long key;
+	long value;
+
+public:
+	Element() {}
+
+	Element(long k, long v) {
+		key = k;
+		value = v;
+	}
+
+	~Element() {}
+
+	void push(long key, long value) {
+		this->key = key;
+		this->value = value;
+	}
+
+	void push(long value) {
+		this->value = value;
+	}
+
+	long getKey() {
+		return key;
+	}
+
+	long getValue() {
+		return value;
+	}
+};
+
+struct MyHash
+{
+
+	long key;
+	vector<Element*> values;
+
+public:
+
+	MyHash() {
+
+		key = -1;
+	}
+
+	MyHash(long a, long b) {
+		key = 1;
+		Element* e = new Element(a, b);
+		values.push_back(e);
+	}
+
+	Element* findIndex(long k) {
+
+		for (const auto& i : values) {
+			if (i->getKey() == k) {
+				return i;
+			}
+		}
+		return nullptr;
+	}
+
+	void push(long k, long v) {
+
+		this->key = 1;
+		Element* index = findIndex(k);
+		if (index != nullptr) {
+			index->push(v);
+			return;
+		}
+
+		index = new Element(k, v);
+		values.push_back(index);
+	}
+
+	long getKey() {
+		return key;
+	}
+
+	long findValue(long k) {
+		Element* index = findIndex(k);
+		if (index != nullptr) {
+			return index->getValue();
+		}
+		return -1;
+	}
+
+	string deleteSet(long k) {
+
+		for (int i = 0; i < values.size(); i++) {
+			if (values[i]->getKey() == k) {
+				if (i != values.size() - 1) {
+					swap(values[i], values[values.size() - 1]);
+				}
+				values.pop_back();
+
+				if (values.empty()) {
+					key = -1;
+				}
+				return "ok";
+			}
+		}
+
+		return "error";
+	}
+};
+
+class Hash {
+
+	int size;
+	MyHash* mas;
+
+public:
+
+	Hash() {
+
+		size = 1000;
+		mas = new MyHash[size];
+	}
+
+	Hash(int s) {
+
+		size = s;
+		mas = new MyHash[size];
+	}
+
+	~Hash() {}
+
+	void push(long key, long value) {
+
+		long a = key % size;
+		mas[a].push(key, value);
+	}
+
+	long get(long key) {
+
+		long b = key % size;
+
+		if (mas[b].getKey() == -1) {
+			return -1;
+		}
+
+		return mas[b].findValue(key);
+	}
+
+	string del(long key) {
+
+		long b = key % size;
+
+		if (mas[b].getKey() == -1) {
+			return "error";
+		}
+
+		return mas[b].deleteSet(key);
+	}
+};
+
+
+int main() {
+
+	int len;
+	cin >> len;
+
+	Hash* x = new Hash(1000);
+
+	string text;
+
+	for (int i = 0; i < len; i++) {
+
+		cin >> text;
+
+		if (text == "put") {
+
+			long key;
+			long value;
+			cin >> key;
+			cin >> value;
+
+			x->push(key, value);
+
+		}
+		else if (text == "get") {
+
+			long key;
+			cin >> key;
+
+			cout << x->get(key) << endl;
+
+		}
+		else if (text == "delete") {
+
+			long key;
+			cin >> key;
+
+			cout << x->del(key) << endl;
+		}
+	}
+
+	return 0;
+}
