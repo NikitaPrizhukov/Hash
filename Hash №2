@@ -1,0 +1,61 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <math.h>
+#include <algorithm>
+using namespace std;
+
+//выводит колличество простых чисел меньше n
+
+int easyNum(int number) {
+
+	int count = 8;
+
+	vector<int> easy;
+	easy.push_back(2);
+	easy.push_back(3);
+	easy.push_back(5);
+	easy.push_back(7);
+
+	if (number < 3) {
+		return 0;
+	}
+	if (number == 3) {
+		return 1;
+	}
+	if (number > 3 && number < 6) {
+		return 2;
+	}
+	if (number > 5 && number < 8) {
+		return 3;
+	}
+
+	int max = 4;
+
+	for (int i = 0; i < number - 8; i++) {
+
+		for (int f = 0; f < easy.size(); f++) {
+			if (count % easy[f] == 0) {
+				break;
+			}
+			if (sqrt(count) <= easy[f]) {
+				max++;
+				easy.push_back(count);
+				break;
+			}
+		}
+
+		count++;
+	}
+	return max;
+}
+
+int main() {
+
+	int number = 0;
+	cin >> number;
+
+	cout << easyNum(number);
+
+	return 0;
+}
