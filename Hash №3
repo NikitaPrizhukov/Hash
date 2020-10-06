@@ -1,0 +1,137 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+//выводит номера строк которые являются анаграммами друг другу
+
+struct Summary
+{
+	string s;
+	int sum = 0;
+
+public:
+
+	Summary(string a) {
+		s = a;
+		for (size_t i = 0; i < a.length(); i++) {
+			sum = sum + a[i];
+		}
+	}
+
+	int getSum() {
+		return sum;
+	}
+
+	string getWord() {
+		return s;
+	}
+};
+
+bool anagram(string a, string b) {
+
+	if (a.length() != b.length()) {
+		return false;
+	}
+
+	int index = 0;
+	int* word = new int[26];
+
+	for (int i = 0; i < 26; i++) {
+		word[i] = 0;
+	}
+
+	while (index < a.length()) {
+
+		int one = 0;
+		int two = 0;
+
+		if (word[a[index] - 97] == 0) {
+			for (size_t i = 0; i < a.length(); i++) {
+				if (a[index] == a[i]) {
+					one++;
+				}
+			}
+
+
+			for (size_t i = 0; i < b.length(); i++) {
+				if (a[index] == b[i]) {
+					two++;
+				}
+			}
+		}
+		else {
+			index++;
+			continue;
+		}
+
+		if (one != two) {
+			return false;
+		}
+		word[a[index] - 97] = one;
+		index++;
+	}
+
+	delete[] word;
+
+	return true;
+}
+
+void findAnagrams(string* anag, int len) {
+
+	vector<Summary> indexStr;
+	vector<vector<int>> index;
+
+
+
+	indexStr.push_back(anag[0]);
+	index.push_back(vector<int>());
+	index[0].push_back(0);
+
+	bool flag = false;
+
+	for (int i = 1; i < len; i++) {
+		flag = false;
+		int sumWord = 0;
+		for (size_t j = 0; j < anag[i].length(); j++) {
+			sumWord += anag[i][j];
+		}
+		for (size_t f = 0; f < indexStr.size(); f++) {
+			if (indexStr[f].getSum() == sumWord) {
+				if (anagram(anag[i], indexStr[f].getWord())) {
+					index[f].push_back(i);
+					flag = true;
+					break;
+				}
+			}
+		}
+		if (flag == false) {
+			indexStr.push_back(anag[i]);
+			index.push_back(vector<int>());
+			index[index.size() - 1].push_back(i);
+		}
+	}
+
+	for (size_t i = 0; i < index.size(); i++) {
+		for (size_t f = 0; f < index[i].size(); f++) {
+			cout << index[i][f] << " ";
+		}
+		cout << endl;
+	}
+}
+
+int main() {
+
+	int number = 0;
+	cin >> number;
+	string* anag = new string[number];
+
+	for (int i = 0; i < number; i++) {
+		cin >> anag[i];
+	}
+
+	findAnagrams(anag, number);
+
+	return 0;
+}
