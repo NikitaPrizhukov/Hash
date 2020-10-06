@@ -1,0 +1,128 @@
+#include <iostream>
+#include <sstream>
+#include <unordered_map>
+#include <cmath>
+using namespace std;
+
+//укрпримиеот урлов
+
+struct Url{
+private:
+	string Url_short;
+	string content;
+
+public:
+
+	Url(){}
+
+	Url(string a){	
+		content = a;
+	}
+
+	~Url(){}
+
+	string getContent() {
+		return content;
+	}
+
+	string getShort_Url() {
+		return Url_short;
+	}
+
+	void correct(string a, string in) {
+		int scrima = a.find('/') + 2;
+ 		int path = a.find('.');
+		Url_short = a.substr(0, scrima) + in + a.substr(path, a.length()-1);
+	}
+};
+
+string encode(long a) {
+
+	if (a == 0) {
+		return "0";
+	}
+
+	string BASE = { "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" };
+	const int base62 = BASE.length();
+
+	long key = fmod(a, base62);
+	string edoc;
+	long q = a;
+
+
+	while (q > 0) {
+
+		edoc += BASE[key];
+		q = q / base62;
+		key = q % base62;
+
+	}
+
+	string code;
+
+	for (int i = edoc.length()-1; i > -1; i--) {
+		code.push_back(edoc[i]);
+	}
+
+	return code;
+}
+
+string baseSite(unordered_map<string, Url*>& mapa,string a, long& index) {
+
+	string job, site, content;
+	
+	stringstream ss;
+	ss << a;
+	
+	ss >> job;
+	ss >> site;
+	
+	if (job == "post") {
+
+		string dop;
+		ss >> dop;
+		content = dop;
+
+		while (ss.eof() != true) {
+			string dop;
+			ss >> dop;
+			content.push_back(' ');
+			content += dop;
+		}
+
+		string key = encode(index);
+		Url* b = new Url(content);
+		b->correct(site, key);
+		mapa[b->getShort_Url()] = b;
+		index++;
+
+		return b->getShort_Url();
+
+	} else {
+
+		if (mapa.find(site) != mapa.end()) {
+
+			return mapa[site]->getContent();			
+		}
+	}
+
+	return "error";
+}
+
+
+int main() {
+
+	string len;
+	getline(cin,len);
+	unordered_map<string, Url*> mapa;
+	long index = 0;
+
+	for (int i = 0; i < stoi(len); i++) {
+		string site;
+		getline(cin, site);
+
+		cout << baseSite(mapa, site, index) << endl;
+	}
+
+	return 0;
+}
