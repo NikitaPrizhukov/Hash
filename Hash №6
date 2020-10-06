@@ -1,0 +1,64 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+//сравнение строк, при учете того что если заменить все символы s и получить t
+//abacaba = xhxixhx
+
+bool findAnag(string first, string last) {
+
+	if (first.length() != last.length()) {
+		return false;
+	}
+
+	int* letterOne = new int[26];
+	for (int i = 0; i < 26; i++) {
+		letterOne[i] = 0;
+	}
+	int* letterTwo = new int[26];
+	for (int i = 0; i < 26; i++) {
+		letterTwo[i] = 0;
+	}
+
+	char* letter = new char[26];
+	for (int i = 0; i < 26; i++) {
+		letter[i] = '-';
+	}
+
+	for (size_t i = 0; i < first.length(); i++) {
+		if (letter[first[i] - 97] == '-') {
+			letterOne[first[i] - 97]++;
+			letterTwo[last[i] - 97]++;
+			letter[first[i] - 97] = last[i];
+		}
+		else if (last[i] == letter[first[i] - 97]) {
+			letterOne[first[i] - 97]++;
+			letterTwo[last[i] - 97]++;
+			if (letterOne[first[i] - 97] != letterTwo[last[i] - 97]) {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	return true;
+}
+
+int main() {
+
+	string first;
+	string last;
+
+	cin >> first;
+	cin >> last;
+
+	if (findAnag(first, last)) {
+		cout << "YES";
+	}
+	else {
+		cout << "NO";
+	}
+
+	return 0;
+}
